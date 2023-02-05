@@ -1,0 +1,2078 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Device Management CP API",
+    "description": "# Overview\n  `Device Management CP API` bundle provides set of Restful APIs to perform various operations on entities and consume services from 6d's DMS-CP platform. The entities should be used in context of relationship to get appropriate details\n  |Entities|Description|\n  |---|---|\n  |`Subscriber`| Subscriber can have assocoated device/setting/Transaction. Subscriber related information|\n  |`Device`| Device Info and associated to subscriber|\n  |`Settings`| Setting associated for device and for subscriber|\n  |`Transaction`| Transaction associated with Subscriber|\n  |`Management`| O&M specific management objects|\n  ---\n## API Bundles\n  `Device Management CP API` are categorsed under different set of APIs based contextual relevance. \n  \n  |Category|Description|\n  |---|---|\n  |`General`| General service API provided by platform|\n  |`SelfCare`| SelfCare specific services|\n  |`Outbound`| Policy and Event based trigger to external systems|\n  |`Management`| Operation & Management APIs. Access only to admin-privileged accounts|\n  ---      \n## Security\n  The platform supports both `Basic` and `OAuth2` authentication. It is encouraged to use `OAuth2` authentication for enhanced and secure way of interacting with the platform. Additionally the authorization module allows to control access to specific resources/API that are provided by the platform. The API Consumer/Endpoint should be whitelisted and authorization vector should be defined appropriately for the client account\n## Getting Started\n  Below are the steps to get started with the `Device Management CP API`.\n  1. Get the account created on the platform with Client credentials\n  2. Get the authorization vector defined for set of APIs for the client account\n  3. Generate an OAuth2 token using your client key by using token API. The token returned in response should be renewed as per the policy\n       <pre><code class=\"language-sh\">{\n      \"access_token\": \"string\",\n      \"token_type\": \"string\",\n      \"expires_in\": \"string\"\n    }</code></pre>\n    \n      *Note; Get the token API details from admin*   \n  4. Start using the API\n  \n  \n  ---",
+    "contact": {
+      "name": "Sixdee",
+      "url": "https://www.6dtech.co.in",
+      "email": "support@6dtech.co.in"
+    },
+    "version": "2.4.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5002/api/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Genral APIs"
+    },
+    {
+      "name": "SelfCare APIs"
+    },
+    {
+      "name": "Outbound APIs"
+    },
+    {
+      "name": "Management APIs"
+    }
+  ],
+  "paths": {
+    "/devices": {
+      "get": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Get devices detail.",
+        "description": "Retrieve device brands and models and other configurable details which satisfy the filter criteria. Any one of the filters is mandatory.",
+        "operationId": "GetModels",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Parameter to filter records.",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ota_support": {
+                      "type": "boolean"
+                    },
+                    "wap_support": {
+                      "type": "boolean"
+                    },
+                    "mms_support": {
+                      "type": "boolean"
+                    },
+                    "data_support": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "[\n\t{\n\t\t\"marketing_vendor\":\"1.ME\",\n\t\t\"marketing_model\":\"M10\",\n\t\t\"tac\":86748602,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"1.ME\",\n\t\t\"marketing_model\":\"M15\",\n\t\t\"tac\":86151803,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"1.ME\",\n\t\t\"marketing_model\":\"M18\",\n\t\t\"tac\":86953202,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"1.ME\",\n\t\t\"marketing_model\":\"M4\",\n\t\t\"tac\":86396802,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"1.ME\",\n\t\t\"marketing_model\":\"M8\",\n\t\t\"tac\":86564902,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"10.OR\",\n\t\t\"marketing_model\":\"G2\",\n\t\t\"tac\":35872810,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"15.93\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"100CAN\",\n\t\t\"marketing_model\":\"CAN-A3\",\n\t\t\"tac\":86756401,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"100CAN\",\n\t\t\"marketing_model\":\"CAN-A7\",\n\t\t\"tac\":86756501,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"Not applicable\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"100CAN\",\n\t\t\"marketing_model\":\"CAN-A9\",\n\t\t\"tac\":86763801,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"Not applicable\"\n\t},\n\t{\n\t\t\"marketing_vendor\":\"100PLUS\",\n\t\t\"marketing_model\":\"100C\",\n\t\t\"tac\":86451102,\n\t\t\"bearer_gprs\":\"Yes\",\n\t\t\"browser_type\":\"HTML\",\n\t\t\"camera_resolution\":\"null\"\n\t},\n\t[\n\t\t{\n\t\t\t\"rel\":\"next\",\n\t\t\t\"href\":\"http://localhost:5002/devices?limit=10&activePage=2\"\n\t\t}\n\t]\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}": {
+      "delete": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Delete subscriber.",
+        "description": "This endpoint allows you to delete the subscriber in the subscriber database.",
+        "operationId": "deleteSubscriber",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "IMSI",
+            "in": "query",
+            "description": "Subscriber IMSI number.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "number"
+            },
+            "example": 404212201663098
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted Successfuly",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/history": {
+      "get": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Get subscriber history",
+        "description": "Retrieve subscriber handset history based on MSISDN.",
+        "operationId": "getsub",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS",
+                "Operator",
+                "Churn"
+              ]
+            }
+          },
+          {
+            "name": "isLuhn_bit",
+            "in": "query",
+            "description": "Optional parameter to add luhn bit in response IMEI. Default luhn bit is false, to get luhn bit set parameter value as true.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "example": false
+          },
+          {
+            "name": "includeDetections",
+            "in": "query",
+            "description": "Optional parameter to add detections in response. Default includeDetections is false, to get detections set parameter value as true.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "example": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "xml": {
+                    "name": "subscriber"
+                  },
+                  "items": {
+                    "$ref": "#/components/schemas/subscriberHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/attributes": {
+      "get": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Get device capabilities.",
+        "description": "Retrieve device capabilities for a specified subscriber.",
+        "operationId": "getDeviceCap",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "imsi": {
+                      "type": "string",
+                      "example": "404212201663098"
+                    },
+                    "imei": {
+                      "type": "string",
+                      "example": "357297124556734"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "{\n    \"bearer_gprs\": \"Yes\",\n    \"browser_type\": \"HTML\",\n    \"camera_resolution\": \"8\",\n    \"connectivity_wifi\": \"Yes\",\n    \"device_type\": \"Smartphone\",\n    \"display_touch_screen\": \"Yes\",\n    \"frequency_band\": \"850|900|1800|1900\",\n    \"gps\": \"Yes\",\n    \"lteFrequency\": \"\",\n    \"marketing_vendor\": \"10.OR\",\n    \"ntms_ota_setting_supported\": \"Yes\",\n    \"operating_system\": \"Android\",\n    \"os_version\": \"7.1.2\",\n    \"resolution_height\": \"960\",\n    \"resolution_width\": \"540\",\n    \"service_email\": \"Yes\",\n    \"service_video_call\": \"Yes\",\n    \"service_volte\": \"Yes\",\n    \"streaming_video\": \"Yes\",\n    \"volteStatus\": \"Yes\",\n    \"wifiSupported\": \"Yes\",\n    \"wifi_tethering\": \"Yes\",\n    \"service_voip\": \"No\",\n    \"bearer_3g\": \"Yes\",\n    \"bearer_lte\": \"Yes\",\n    \"is4GfreqSupported\": \"Yes\",\n    \"memory_built_in\": \"16 GB\",\n    \"mms_wav\": \"null\",\n    \"network_umts\": \"Yes\",\n    \"number_of_sim_card_slots\": \"2\",\n    \"wcdma_fdd_band_1\": \"Yes\",\n    \"wcdma_fdd_band_10\": \"null\",\n    \"wcdma_fdd_band_2\": \"No\",\n    \"wcdma_fdd_band_3\": \"No\",\n    \"wcdma_fdd_band_4\": \"No\",\n    \"wcdma_fdd_band_5\": \"Yes\",\n    \"wcdma_fdd_band_6\": \"No\",\n    \"wcdma_fdd_band_7\": \"No\",\n    \"wcdma_fdd_band_8\": \"Yes\",\n    \"wcdma_fdd_band_9\": \"No\",\n    \"marketing_model\": \"E\",\n    \"3g\": \"Yes\",\n    \"Test\": \"null\",\n    \"ntms_ota_bootstrap_required\": \"No\",\n    \"lte_fdd_band_1\": \"Yes\",\n    \"lte_fdd_band_10\": \"No\",\n    \"lte_fdd_band_11\": \"No\",\n    \"lte_fdd_band_12\": \"No\",\n    \"lte_fdd_band_13\": \"No\",\n    \"lte_fdd_band_14\": \"No\",\n    \"lte_fdd_band_15\": \"No\",\n    \"lte_fdd_band_16\": \"No\",\n    \"lte_fdd_band_17\": \"No\",\n    \"lte_fdd_band_18\": \"No\",\n    \"lte_fdd_band_19\": \"No\",\n    \"lte_fdd_band_2\": \"No\",\n    \"lte_fdd_band_20\": \"No\",\n    \"lte_fdd_band_21\": \"No\",\n    \"lte_fdd_band_25\": \"No\",\n    \"lte_fdd_band_26\": \"No\",\n    \"lte_fdd_band_27\": \"No\",\n    \"lte_fdd_band_28\": \"No\",\n    \"lte_fdd_band_3\": \"Yes\",\n    \"lte_fdd_band_4\": \"No\",\n    \"lte_fdd_band_5\": \"Yes\",\n    \"lte_fdd_band_6\": \"No\",\n    \"lte_fdd_band_7\": \"No\",\n    \"lte_fdd_band_8\": \"Yes\",\n    \"lte_fdd_band_9\": \"No\",\n    \"lte_tdd_band_33\": \"No\",\n    \"lte_tdd_band_34\": \"No\",\n    \"lte_tdd_band_35\": \"No\",\n    \"lte_tdd_band_36\": \"No\",\n    \"lte_tdd_band_37\": \"No\",\n    \"lte_tdd_band_38\": \"No\",\n    \"lte_tdd_band_39\": \"No\",\n    \"lte_tdd_band_40\": \"Yes\",\n    \"lte_tdd_band_41\": \"Yes\",\n    \"lte_tdd_band_42\": \"No\",\n    \"lte_tdd_band_43\": \"No\",\n    \"ots\": \"Yes\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/imei": {
+      "get": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Get IMEI.",
+        "description": "Retrieve the latest IMEI being used by subscriber.",
+        "operationId": "getIMEI",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                },
+                "examples": {
+                  "sample response": {
+                    "value": "[\n    {\n        \"IMEI\": \"911612002458712\"\n    }\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/sms/{msisdn}": {
+      "post": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "Send SMS.",
+        "description": "Send a text SMS to a specified MSISDN.",
+        "operationId": "sendSMS",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "description": "The SMS text to be send to the user. The length of the text is not limited. If the text is longer than 145 or 160 bytes (depending on SMSC configuration) it will be delivered in multiple SMS segments.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "hi subscriber"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/iosSettings/{settingId}/{filename}": {
+      "get": {
+        "tags": [
+          "Genral APIs"
+        ],
+        "summary": "IOS Settings",
+        "description": "Dowload IOS Settings.",
+        "operationId": "IOSSettings",
+        "parameters": [
+          {
+            "name": "settingId",
+            "in": "path",
+            "description": "should be in base64",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "example": "MTYyODY3MjUxODI3NA=="
+            }
+          },
+          {
+            "name": "filename",
+            "in": "path",
+            "description": "should be in base64",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "example": "dmFsaWRfdXNlX2lQaG9uZV9jb25maWcubW9iaWxlY29uZmln"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/json; charset=utf-8": {
+                "schema": {
+                  "type": "string",
+                  "example": "file data"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "https://localhost:5003/api"
+          }
+        ]
+      }
+    },
+    "/setting/{msisdn}": {
+      "get": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Get settings.",
+        "description": "Retrieve the settings for specified MSISDN.",
+        "operationId": "getSettings",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction.",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "[\n  {\n    \"name\": \"Internet Settings\",\n    \"service\": \"Internet\",\n    \"instruction\": \"Dear Customer, Please simply set the APN as mobitel in GPRS account on your device to access internet. For further assistance, please call <PIN> to this.\",\n    \"iPhoneInstruction\": \"welcome mobitel\"\n  },\n  {\n    \"name\": \"MMS Settings\",\n    \"service\": \"MMS\",\n    \"instruction\": \"Dear Customer, Please simply set the APN as mobitel in GPRS account on your device to access internet. For further assistance, please call 1717 \",\n    \"iPhoneInstruction\": \"Thanks for Subscribing Mobitel Network\"\n  }\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "402": {
+            "description": "Blacklisted"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Send settings",
+        "description": "Generates settings message.  This starts a normal DMS flow including pre and post SMS (if configured). It is normally used from an external a system such as CRM/self care portal to initiate settings towards the subscribers phone.",
+        "operationId": "Command",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "description": "Optional parameter send settings based on service.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Internet",
+                "MMS",
+                "WAP",
+                "SMS"
+              ]
+            },
+            "example": "MMS"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "keyword of SMS",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "INTERNET"
+          },
+          {
+            "name": "shortcode",
+            "in": "query",
+            "description": "Shortcode of SMS",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 555
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/info": {
+      "get": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Get latest device information.",
+        "description": "Get the latest device information for the specified MSISDN.",
+        "operationId": "latestTriplet",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "{\n\t\"msisdn\":\"9876543212\",\n\t\"imei\":\"456432345678999\",\n\t\"lastActivationDate\":\"20/08/2021 09:01 PM\",\n\t\"createdDate\":\"20/08/2021 09:01 PM\",\n\t\"posibleModel\":[\n\t\t{\n\t\t\t\"modelName\":\"Sumsang:g9\"\n\t\t},\n\t\t{\n\t\t\t\"modelName\":\"Sumsang:g10\"\n\t\t}\n\t]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/updateModel": {
+      "put": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Update device model.",
+        "description": "Update the current device model for the specified MSISDN by providing an IMEI.",
+        "operationId": "upadteModel",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a service provider",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "imei",
+            "in": "query",
+            "description": "Subscriber IMEI number",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 43456899765432
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/transactionHistory": {
+      "get": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Get transaction history.",
+        "description": "Retrieve the transaction history for the specified MSISDN.",
+        "operationId": "transactionHistory",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a service provider",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "description": "Parameter to get records based on start Date.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2018-02-01"
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "description": "Parameter to get records based on end Date.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2018-02-01"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Optional parameter to limit the number of records.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 5
+          },
+          {
+            "name": "activePage",
+            "in": "query",
+            "description": "Optional parameter to get records based on page number.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "[\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"success\",\n\t\t\"statusCode\":\"103\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-01 08:02:59 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"success\",\n\t\t\"statusCode\":\"103\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-01 08:08:42 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"failure\",\n\t\t\"statusCode\":\"118\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-01 09:04:43 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"failure\",\n\t\t\"statusCode\":\"502\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-01 09:04:53 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"failure\",\n\t\t\"statusCode\":\"502\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-02 04:00:16 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"failure\",\n\t\t\"statusCode\":\"502\",\n\t\t\"typeOfMessage\":\"MANUAL\",\n\t\t\"date\":\"2021-09-02 04:01:32 PM\"\n\t},\n\t{\n\t\t\"type\":\"DMS\",\n\t\t\"endPoint\":\"CC_PAGE\",\n\t\t\"status\":\"success\",\n\t\t\"statusCode\":\"100\",\n\t\t\"typeOfMessage\":\"XML\",\n\t\t\"date\":\"2021-09-02 04:01:51 PM\"\n\t},\n\t[\n\t\t{\n\t\t\t\"rel\":\"previous\",\n\t\t\t\"href\":\"http://localhost:5002/api/subscriber/{msisdn}/transactionHistory?limit=10&activePage=7670\"\n\t\t},\n\t\t{\n\t\t\t\"rel\":\"next\",\n\t\t\t\"href\":\"http://localhost:5002/api/subscriber/{msisdn}/transactionHistory?limit=10&activePage=7672\"\n\t\t}\n\t]\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/instructions": {
+      "get": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Get settings instruction.",
+        "description": "Get the settings instruction with images for the specified MSISDN.",
+        "operationId": "instruction",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "description": "Parameter to get records based on the specific service.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Internet",
+                "MMS",
+                "WAP",
+                "SMS"
+              ]
+            },
+            "example": "MMS"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction.",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "[\n    {\n        \"name\": \"Internet Settings\",\n        \"service\": \"Internet\",\n        \"steps\": [\n            {\n                \"step\": \"1\",\n                \"text\": \"On Start, flick left to the App list\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/1.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"2\",\n                \"text\": \"Touch the Setting Icon\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/2.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"3\",\n                \"text\": \"Touch the Sim Card & Mobile Data\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/3.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"4\",\n                \"text\": \"Touch the Sim1/Sim2\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/4.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"5\",\n                \"text\": \"Touch the Access Point Names\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/5.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"6\",\n                \"text\": \"Touch the +\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/6.svg?SERVICE_TYPE=Not Set&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"7\",\n                \"text\": \"Touch the Name and keep value Internet and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Not Set&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"8\",\n                \"text\": \"Touch the APN and keep value Mobitel and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"9\",\n                \"text\": \"Touch the Proxy and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=Not Set&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"10\",\n                \"text\": \"Touch the Port and keep value null if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"11\",\n                \"text\": \"Touch the Username and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"12\",\n                \"text\": \"Touch the Password and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"13\",\n                \"text\": \"Touch the Server and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"14\",\n                \"text\": \"Touch the MMSC and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"15\",\n                \"text\": \"Touch the MMS proxy and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/7.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=Not Set&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"16\",\n                \"text\": \"Touch the MMS port and keep value null if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=Not Set&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"17\",\n                \"text\": \"Touch the MCC and keep value null if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=Not Set&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"18\",\n                \"text\": \"Touch the MNC and keep value null if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"19\",\n                \"text\": \"Touch the Authentication type and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"20\",\n                \"text\": \"Touch the APN type and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"21\",\n                \"text\": \"Touch the APN protocol and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"22\",\n                \"text\": \"Touch the APN roaming protocol and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"23\",\n                \"text\": \"Touch the Button APN ENABLE/DISABLE and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=Not Set&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"24\",\n                \"text\": \"Touch the Bearer and keep value GSM-GPRS if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/8.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"25\",\n                \"text\": \"Touch the MVNO type and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/9.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"26\",\n                \"text\": \"Touch the MVNO value and keep value Not Set if it is already available then Skip and scroll down\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/9.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"27\",\n                \"text\": \"Touch Right Icon on Right upside & Select Save\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/9.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"28\",\n                \"text\": \"Touch the Internet\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/10.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            },\n            {\n                \"step\": \"29\",\n                \"text\": \"Your Profile will be Selected and set as default.\",\n                \"imageURL\": \"http://10.0.14.195:8096/visualfile/Android_11/Custom/ColorOS_11.1/10.svg?SERVICE_TYPE=Internet&APN=Mobitel&PROXY_ADDRESS=Not Set&PORT_NUMBER=null&USERNAME=Not Set&PASSWORD=Not Set&SERVER=Not Set&MMSC=Not Set&MMS_PROXY=Not Set&MMS_PORT=null&MCC=null&MNC=null&AUTHENTICATION_TYPE=Not Set&APN_TYPE=Not Set&APN_PROTOCOL=Not Set&APN_ROAMING_PROTOCOL=Not Set&APN_ENABLE=Not Set&BEARER=GSM-GPRS&MVNO_TYPE=Not Set&MVNO_VALUE=Not Set&OPERATOR_WAP=Not Set\"\n            }\n        ]\n    }\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/images": {
+      "get": {
+        "tags": [
+          "SelfCare APIs"
+        ],
+        "summary": "Get device Images.",
+        "description": "Retrive available device image for specified MSISDN.",
+        "operationId": "getDeviceImage",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            },
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample response": {
+                    "value": "[\n    {\n        \"order\": 0,\n        \"name\": \"SAMSUNG_SM_M025F_DS_16124341754420.png\",\n        \"imageURL\": \"http://10.0.14.195:8096/DeviceImages/aP89DEd2imtfpSZkc32PwN/SAMSUNG_SM_M025F_DS_16124341754420.png\"\n    }\n]"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/event": {
+      "post": {
+        "tags": [
+          "Outbound APIs"
+        ],
+        "summary": "Event Trigger",
+        "description": "Generates triggers on events.As per the policy and rules defined, platform can initiate webcall towards 3pp system. The callback URL can be configured or registered but the payload format will be as per this specification ",
+        "operationId": "Event",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a tenant based on abbreviation.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/subscriber_event_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/subscriber/{msisdn}/createSub": {
+      "put": {
+        "tags": [
+          "Management APIs"
+        ],
+        "summary": "Create Subscriber",
+        "description": "Add new Subscriber along with triplet information - MSISDN/IMSI/IMEI",
+        "operationId": "createSubscriber",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Optional parameter to identify a service provider",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "COL"
+          },
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "msisdn",
+            "in": "path",
+            "description": "Subscriber MSISDN number.",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "imei",
+            "in": "query",
+            "description": "Subscriber IMEI number",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 43456899765432
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "WEB",
+                "IVR",
+                "USSD",
+                "SMS"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    },
+    "/device/{tac}": {
+      "put": {
+        "tags": [
+          "Management APIs"
+        ],
+        "summary": "Add New Device to device library",
+        "description": "Add new device along with device information",
+        "operationId": "createDevice",
+        "parameters": [
+          {
+            "name": "corelation_id",
+            "in": "query",
+            "description": "Unique ID to identify incoming request",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          {
+            "name": "tac",
+            "in": "path",
+            "description": "Valid TAC of device",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": 919921920119
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Parameter to identify source of the request.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DLU",
+                "WEB"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "examples": {
+                "sample response": {
+                  "value": "{\n  \"bearer_gprs\": \"Yes\",\n  \"browser_type\": \"HTML\",\n  \"camera_resolution\": \"8\",\n  \"connectivity_wifi\": \"Yes\",\n  \"device_type\": \"Smartphone\",\n  \"display_touch_screen\": \"Yes\",\n  \"frequency_band\": \"850|900|1800|1900\",\n  \"gps\": \"Yes\",\n  \"lteFrequency\": \"\",\n  \"marketing_vendor\": \"10.OR\",\n  \"ntms_ota_setting_supported\": \"Yes\",\n  \"operating_system\": \"Android\",\n  \"os_version\": \"7.1.2\",\n  \"resolution_height\": \"960\",\n  \"resolution_width\": \"540\",\n  \"service_email\": \"Yes\",\n  \"service_video_call\": \"Yes\",\n  \"service_volte\": \"Yes\",\n  \"streaming_video\": \"Yes\",\n  \"volteStatus\": \"Yes\",\n  \"wifiSupported\": \"Yes\",\n  \"wifi_tethering\": \"Yes\",\n  \"service_voip\": \"No\",\n  \"bearer_3g\": \"Yes\",\n  \"bearer_lte\": \"Yes\",\n  \"is4GfreqSupported\": \"Yes\",\n  \"memory_built_in\": \"16 GB\",\n  \"mms_wav\": \"null\",\n  \"network_umts\": \"Yes\",\n  \"number_of_sim_card_slots\": \"2\",\n  \"wcdma_fdd_band_1\": \"Yes\",\n  \"wcdma_fdd_band_10\": \"null\",\n  \"wcdma_fdd_band_2\": \"No\",\n  \"wcdma_fdd_band_3\": \"No\",\n  \"wcdma_fdd_band_4\": \"No\",\n  \"wcdma_fdd_band_5\": \"Yes\",\n  \"wcdma_fdd_band_6\": \"No\",\n  \"wcdma_fdd_band_7\": \"No\",\n  \"wcdma_fdd_band_8\": \"Yes\",\n  \"wcdma_fdd_band_9\": \"No\",\n  \"marketing_model\": \"E\",\n  \"3g\": \"Yes\",\n  \"Test\": \"null\",\n  \"ntms_ota_bootstrap_required\": \"No\",\n  \"lte_fdd_band_1\": \"Yes\",\n  \"lte_fdd_band_10\": \"No\",\n  \"lte_fdd_band_11\": \"No\",\n  \"lte_fdd_band_12\": \"No\",\n  \"lte_fdd_band_13\": \"No\",\n  \"lte_fdd_band_14\": \"No\",\n  \"lte_fdd_band_15\": \"No\",\n  \"lte_fdd_band_16\": \"No\",\n  \"lte_fdd_band_17\": \"No\",\n  \"lte_fdd_band_18\": \"No\",\n  \"lte_fdd_band_19\": \"No\",\n  \"lte_fdd_band_2\": \"No\",\n  \"lte_fdd_band_20\": \"No\",\n  \"lte_fdd_band_21\": \"No\",\n  \"lte_fdd_band_25\": \"No\",\n  \"lte_fdd_band_26\": \"No\",\n  \"lte_fdd_band_27\": \"No\",\n  \"lte_fdd_band_28\": \"No\",\n  \"lte_fdd_band_3\": \"Yes\",\n  \"lte_fdd_band_4\": \"No\",\n  \"lte_fdd_band_5\": \"Yes\",\n  \"lte_fdd_band_6\": \"No\",\n  \"lte_fdd_band_7\": \"No\",\n  \"lte_fdd_band_8\": \"Yes\",\n  \"lte_fdd_band_9\": \"No\",\n  \"lte_tdd_band_33\": \"No\",\n  \"lte_tdd_band_34\": \"No\",\n  \"lte_tdd_band_35\": \"No\",\n  \"lte_tdd_band_36\": \"No\",\n  \"lte_tdd_band_37\": \"No\",\n  \"lte_tdd_band_38\": \"No\",\n  \"lte_tdd_band_39\": \"No\",\n  \"lte_tdd_band_40\": \"Yes\",\n  \"lte_tdd_band_41\": \"Yes\",\n  \"lte_tdd_band_42\": \"No\",\n  \"lte_tdd_band_43\": \"No\",\n  \"ots\": \"Yes\"\n}"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "corelation_id": {
+                "description": "Unique ID to identify a transaction",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "type": "string"
+                },
+                "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad data"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Data not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "oAuthSample": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "subscriberHistory": {
+        "type": "object",
+        "properties": {
+          "msisdn": {
+            "example": 919921920119
+          },
+          "imsi": {
+            "example": 404353082072243
+          },
+          "imei": {
+            "example": 35201904739902
+          },
+          "lastDetected": {
+            "example": 1637668292653
+          },
+          "lastConfigured": {
+            "example": 1637668292653
+          },
+          "make": {
+            "example": 1637668292653
+          },
+          "model": {
+            "example": 1637668292653
+          },
+          "detections": {
+            "$ref": "#/components/schemas/subscriberHistory_detections"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "IMEI": {
+            "type": "number",
+            "example": 919895325870
+          }
+        }
+      },
+      "subscriber_event_body": {
+        "type": "object",
+        "properties": {
+          "msisdn": {
+            "type": "number",
+            "example": 919921920119
+          },
+          "imsi": {
+            "type": "string",
+            "example": "404212201663098"
+          },
+          "imei": {
+            "type": "string",
+            "example": "357297124556734"
+          },
+          "make": {
+            "type": "string",
+            "example": "Samsung"
+          },
+          "model": {
+            "type": "string",
+            "example": "Note 20"
+          },
+          "event": {
+            "type": "string",
+            "example": "NEWSUB",
+            "enum": [
+              "NEWSUBS",
+              "SIMUPDT",
+              "DEVUPDT",
+              "SUBNTFY"
+            ]
+          }
+        }
+      },
+      "subscriberHistory_detections_detection": {
+        "type": "object",
+        "properties": {
+          "imsi": {
+            "example": 404353082072243
+          },
+          "imei": {
+            "example": 35201904739902
+          },
+          "lastDetected": {
+            "example": 1637668292653
+          },
+          "lastConfigured": {
+            "example": 1637668292653
+          }
+        }
+      },
+      "subscriberHistory_detections": {
+        "type": "object",
+        "properties": {
+          "detection": {
+            "$ref": "#/components/schemas/subscriberHistory_detections_detection"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oAuthSample": {
+        "type": "oauth2",
+        "description": "OAuth2.0 is to authenticate all the endpoint",
+        "flows": {
+          "password": {
+            "tokenUrl": "http://10.0.14.195:8098/auth/realms/GUI/protocol/openid-connect/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}
